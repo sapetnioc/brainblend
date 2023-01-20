@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "nibablender"
+version = "0.0.1"
+authors = [
+  { name="Yann Cointepas" },
+]
+description = "Importing images with nibabel in Blender and use it as mesh texture"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "nibabel"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/sapetnioc/nibablender"
+
