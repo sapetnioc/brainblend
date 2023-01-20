@@ -24,3 +24,5 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/sapetnioc/nibablender"
 
+[tool.setuptools]
+include-package-data = true
