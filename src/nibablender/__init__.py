@@ -15,9 +15,9 @@ pyximport.install()
 from nibablender.optimized import array_to_rgba
 
 flatten_3d = '''shader flatten_3d(
-    int size_x = 25,
-    int size_y = 41,
-    int size_z = 33,
+    int size_x = 1,
+    int size_y = 1,
+    int size_z = 1,
     float scale_x = 20,
     float scale_y = 20,
     float scale_z = 20,
@@ -98,7 +98,9 @@ def create_material():
     # Create node converting 3D coordinates to 2D     
     flatten_3d = nodes.new('ShaderNodeScript')
     flatten_3d.script = bpy.data.texts['flatten_3d']
-    #flatten_3d.size_z, flatten_3d.size_y, flatten_3d.size_x = image.shape
+    flatten_3d.inputs['size_z'].default_value, \
+    flatten_3d.inputs['size_y'].default_value, \
+    flatten_3d.inputs['size_x'].default_value = volume.shape
     flatten_3d.location = Vector((-330,177))
 
     # Create texture node with 2D image
