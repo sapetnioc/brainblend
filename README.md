@@ -1,6 +1,6 @@
 # brainblend
 
-This project is still a simple proof of concept. Its goal is to make it easy to import a 3D brain image into [Blender](https://www.blender.org/) and use it as dynamic 3D texture allowing to use any mesh to "cut" the volume in animated scenes. To date I just tried with one croped MRI included in the [Nibabel](https://nipy.org/nibabel/) project and was able to create this animation:
+This project is still a simple proof of concept. Its goal is to make it easy to import a 3D brain image into [Blender](https://www.blender.org/) and use it as dynamic 3D texture allowing to use any mesh to "cut" the volume in animated scenes. To date I just tried with one cropped MRI included in the [Nibabel](https://nipy.org/nibabel/) project and was able to create this animation:
 
 
 https://user-images.githubusercontent.com/3062350/214160523-7f3689fa-b4cd-4f5a-a149-31f40d9644b6.mp4
@@ -22,7 +22,7 @@ I am really not an expert in Blender or Nibabel, I worked by trial and error unt
 
 Long ago I had been able to use a voxel data structure to have a 3D texture in Blender. But voxel data have disappeared when the API had been completely rewritten and I do not know any equivalent in current Blender (latest release at the time of this writing is 3.4.1). Therefore, I choosed to convert the 3D image in a 2D texture and to use a dynamic mesh texture (based on shaders) that projects 3D coordinates to this 2D image.
 
-For the creation of the 2D image from the 3D volume, I needed something faster than Python code. I tried Cython just to see if it could work within Blender. I was surprised how easy it was to make it work. I probably could have use Numpy but did not even tried yet. 
+For the creation of the 2D image from the 3D volume, I needed something faster than Python code. I tried Cython just to see if it could work within Blender. I was surprised how easy it was to make it work. I probably could have use Numpy but did not even try yet. 
 
 For the dynamic texture I used shader nodes. The computation of a 2D coordinate from a 3D coordinate is done with a node using an [Open Shading Language (OSL)](https://github.com/AcademySoftwareFoundation/OpenShadingLanguage) script. For this to work in Blender, it seems necessary to use the "Cycles" renderer and to activate the support of OSL. These steps are done automatically via the Python API in the following instructions.
 
