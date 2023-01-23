@@ -28,7 +28,7 @@ For the dynamic texture I used shader nodes. The computation of a 2D coordinate 
 
 ## Usage instructions
 
-These instructions are supposed to be able to be copied and pasted into a terminal. They allow to create a material including the 3D texture of an image provided with Nibabel and to use this material on the cube of the default scene of Blender.
+These instructions are for Linux. They are supposed to be able to be copied and pasted into a terminal. They allow to create a material including the 3D texture of an image provided with Nibabel and to use this material on the cube of the default scene of Blender.
 
 1. Download and install Blender
 
