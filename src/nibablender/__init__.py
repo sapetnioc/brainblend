@@ -12,7 +12,7 @@ import numpy as np
 
 import pyximport
 pyximport.install()
-from nibablender.optimized import array_to_rgba
+from brainblend.optimized import array_to_rgba
 
 flatten_3d = '''shader flatten_3d(
     int size_x = 1,

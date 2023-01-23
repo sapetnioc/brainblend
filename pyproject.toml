@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "nibablender"
+name = "brainblend"
 version = "0.0.1"
 authors = [
   { name="Yann Cointepas" },
@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/sapetnioc/nibablender"
+"Homepage" = "https://github.com/sapetnioc/brainblend"
 
 [tool.setuptools]
 include-package-data = true
