@@ -1,0 +1,15 @@
+Bootstrap: docker
+From: ubuntu
+
+%environment
+
+    XDG_CACHE_HOME=/tmp/cache
+    
+%post
+    apt update -y
+    apt install -y curl
+    curl -fsSL https://pixi.sh/install.sh | sh
+    mv ~/.pixi/bin/pixi /usr/local/bin
+
+%runscript
+    /usr/local/bin/pixi "$@"

@@ -26,54 +26,50 @@ For the creation of the 2D image from the 3D volume, I needed something faster t
 
 For the dynamic texture I used shader nodes. The computation of a 2D coordinate from a 3D coordinate is done with a node using an [Open Shading Language (OSL)](https://github.com/AcademySoftwareFoundation/OpenShadingLanguage) script. For this to work in Blender, it seems necessary to use the "Cycles" renderer and to activate the support of OSL. These steps are done automatically via the Python API in the following instructions.
 
-## Usage instructions
+## Compile blender with pixi
 
-These instructions are for Linux. They are supposed to be able to be copied and pasted into a terminal. They allow to create a material including the 3D texture of an image provided with Nibabel and to use this material on the cube of the default scene of Blender.
+In order to be able to use a specific Python version compatible with BrainVISA conda packages, I chose to compile Blender. Here is how I compiled Blender 5.0 using Pixi:
 
-1. Download and install Blender
+```sh
+pixi init blender-pixi
+cd blender-pixi
+# The initial list of packages comes from Blender compilation documentation.
+# I modified it until I was able to compile.
+# Restriction on the Python version is probably useless at this time
+pixi add python=3.11 pkgconfig gcc=14 gxx=14 make cmake git git-lfs subversion xorg-libx11 xorg-xproto xorg-kbproto xorg-libxxf86vm xorg-libxcursor xorg-libxi xorg-libxrandr xorg-libxinerama xorg-libsm libegl wayland wayland-protocols libxkbcommon dbus libegl-devel numpy requests zstandard
 
+# I will use openvdb format. Therefore, I add the lib and the corresponding tools.
+pixi add openvdb openvdb-tools
+
+pixi shell
+
+# Get Blender sources
+
+git clone -b blender-v5.0-release https://projects.blender.org/blender/blender.git
+cd blender
+
+make update
+
+# Ugly workaround: four MaterialX libraries are missing to link the blender executable
+# How to fix this the right way ?
+pixi add sed
+cp -a lib/linux_x64/materialx/lib/* $CONDA_PREFIX/lib
+sed -i 's/set(PLATFORM_LINKLIBS "")/set(PLATFORM_LINKLIBS "-lMaterialXRender -lMaterialXGenGlsl -lMaterialXGenMsl -lMaterialXGenShader")/g' CMakeLists.txt
+
+# Fix a problem to find numpy includes
+sed -i 's:set(_numpy_include "core/include"):set(_numpy_include "_core/include"):g' CMakeLists.txt
+
+# Do not use Python provided by Blender
+rm -r lib/linux_x64/python
+
+# Blender compilation and installation
+mkdir ../build_linux
+cd ../build_linux
+cmake ../blender -DCMAKE_INSTALL_PREFIX="$CONDA_PREFIX/blender" \
+    -DPYTHON_NUMPY_INCLUDE_DIRS=$(python -c "import sysconfig; print(sysconfig.get_config_var('LIBDEST'))")/site-packages/numpy/_core/include \
+    -DWITH_PYTHON_INSTALL=OFF
+    
+make -j10
+make install
+ln -s ../blender/blender $CONDA_PREFIX/bin/blender
 ```
-wget https://mirrors.dotsrc.org/blender/release/Blender3.4/blender-3.4.1-linux-x64.tar.xz
-tar xf blender-3.4.1-linux-x64.tar.xz
-rm blender-3.4.1-linux-x64.tar.xz
-BLPYTHON_DIR="$PWD/blender-3.4.1-linux-x64/3.4/python"
-BLPYTHON=`echo "$BLPYTHON_DIR/bin/"python*`
-BLPYTHON_VERSION=`"$BLPYTHON" -c 'import platform; print(".".join(platform.python_version_tuple()))'`
-BLPYTHON_SHORT_VERSION=`"$BLPYTHON" -c 'import platform; print(".".join(platform.python_version_tuple()[:2]))'`
-```
-
-2. Install pip and Nibabel
-
-```
-"$BLPYTHON" -m ensurepip
-export BLPIP="$BLPYTHON_DIR/bin/pip3"
-"$BLPIP" install --upgrade pip
-"$BLPIP" install --upgrade nibabel cython
-```
-
-3. Download and setup brainblend
-
-It is necessary for the compilation of cython modules to add Python include files that are not included in Blender's Python distribution.
-Then Cython modules can be compiled. Be sure that required compilation tools are installed on your system.
-
-```
-"$BLPIP" install git+https://github.com/sapetnioc/brainblend
-wget https://www.python.org/ftp/python/$BLPYTHON_VERSION/Python-$BLPYTHON_VERSION.tar.xz
-tar xf Python-$BLPYTHON_VERSION.tar.xz
-mv Python-$BLPYTHON_VERSION/Include/* "$BLPYTHON_DIR/include/python$BLPYTHON_SHORT_VERSION"
-rm -r Python-$BLPYTHON_VERSION Python-$BLPYTHON_VERSION.tar.xz
-"$BLPYTHON_DIR/bin/cythonize" -i "$BLPYTHON_DIR/lib/python3.10/site-packages/brainblend/optimized.pyx"
-```
-
-4. Create scene
-
-To date there is a single proof of concept command that loads a NIFTI image provided by Nibabel and setup a material on the cube of the default Blender scene. This command must be launched from Python within Blender:
-
-```
-import brainblend
-brainblend.create_material()
-```
-
-5. Check if it's working
-
-Render an image (for instance by pressing F12). You should see a black cube with some MRI voxels in a corner. To see the texture in Blender, you must set the viewport shading to "rendered" (look at the circle icons in the top right corner of Blender's 3D views). You can now move the cube around to see the 3D texture.
