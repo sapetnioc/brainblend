@@ -1,0 +1,26 @@
+schema_version = "1.0.0"
+
+id = "brainblend"
+version = "0.1.0"
+name = "BrainBlend"
+tagline = "Display MRI volume slices on any surface"
+maintainer = "sapetnioc"
+type = "add-on"
+website = "https://github.com/sapetnioc/brainblend"
+tags = ["Import-Export", "Material", "Scene"]
+
+blender_version_min = "4.2.0"
+
+license = ["SPDX:GPL-3.0-or-later"]
+
+# Pure-Python wheels bundled with the extension (fetched by tools/build.py).
+wheels = [
+  "./wheels/nibabel-5.5.0-py3-none-any.whl",
+  "./wheels/packaging-26.3-py3-none-any.whl",
+]
+
+[permissions]
+files = "Read NIfTI volumes from disk"
+
+[build]
+paths_exclude_pattern = ["__pycache__/", "*.pyc", ".*"]

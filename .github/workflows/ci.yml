@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install Blender as a Python module
+        run: pip install bpy==5.3.0 nibabel pytest
+      - name: Run tests (Cycles renders compared with numpy)
+        run: python -m pytest -v tests
+      - name: Build extension zip
+        run: python tools/build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: brainblend-extension
+          path: dist/*.zip
